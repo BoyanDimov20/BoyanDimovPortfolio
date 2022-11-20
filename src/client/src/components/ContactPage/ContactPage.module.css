@@ -1,0 +1,96 @@
+.section {
+    margin-left: auto;
+    margin-right: auto;
+
+    background-color: #282c34;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.form {
+    margin-left: 20px;
+    margin-right: 20px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 14px 14px 10px 14px;
+    display: flex;
+    flex-direction: column;
+    width: 570px;
+}
+
+.title {
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 30px;
+}
+
+.label {
+    text-align: left;
+    padding: 8px;
+}
+
+.input {
+    background-color: #303245;
+    border-radius: 12px;
+    border: 0;
+    box-sizing: border-box;
+    color: #eee;
+    font-size: 18px;
+    height: 100%;
+    outline: 0;
+    padding: 8px 20px 8px 15px;
+    width: 50%;
+    margin-bottom: 20px;
+}
+
+.textarea {
+    background-color: #303245;
+    border-radius: 12px;
+    border: 0;
+    box-sizing: border-box;
+    color: #eee;
+    font-size: 18px;
+    height: 100%;
+    outline: 0;
+    padding: 8px 20px 8px 15px;
+    width: 100%;
+}
+
+.btn {
+    background-color: #08d;
+    border-radius: 12px;
+    border: 0;
+    box-sizing: border-box;
+    color: #eee;
+    cursor: pointer;
+    font-size: 18px;
+    height: 50px;
+    margin-top: 20px;
+    text-align: center;
+    width: 200px;
+    margin-left: auto;
+}
+
+.btn:active {
+    background-color: #06b;
+}
+
+@media only screen and (max-width: 605px) {
+    .btn {
+        width: 100%;
+    }
+    .input {
+        width: 100%;
+    }
+    .textarea {
+        width: 100%;
+    }
+    .form {
+        width: 320px;
+    }
+}

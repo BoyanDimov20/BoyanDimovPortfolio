@@ -1,0 +1,36 @@
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: #282c34;
+    padding-right: 50px;
+    padding-top: 20px;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    border-bottom: 1px solid white;
+}
+
+.fixed {
+    position: fixed;
+    z-index: 20;
+    right: 0;
+}
+
+.fixedContainer {
+    background-color: white;
+    color: black;
+}
+

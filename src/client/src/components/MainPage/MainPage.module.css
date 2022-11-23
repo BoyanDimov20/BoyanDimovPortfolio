@@ -1,6 +1,7 @@
 .checkList {
     margin: 0;
     padding-left: 1.2rem;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     row-gap: 15px;
@@ -40,29 +41,17 @@
     from {
         width: 0px;
         height: 0px;
+        transform: rotate(-45deg);
+
     }
 
     to {
         width: 5px;
         height: 11px;
+        transform: rotate(45deg);
     }
 }
 
-
-
-.section {
-    margin-left: auto;
-    margin-right: auto;
-    
-    background-color: #282c34;
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    color: white;
-}
 
 @media only screen and (max-width: 820px) {
     .mobileIcon {

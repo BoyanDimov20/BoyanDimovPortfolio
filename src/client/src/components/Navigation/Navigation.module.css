@@ -1,36 +1,78 @@
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    background-color: #282c34;
-    padding-right: 50px;
-    padding-top: 20px;
+.desktopNav {
+  position: fixed;
+
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: #282c34;
+  padding-right: 50px;
+  padding-top: 20px;
 }
 
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+.desktopNav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
 
-li a:hover {
-    border-bottom: 1px solid white;
+.desktopNav li a:hover {
+  border-bottom: 1px solid white;
 }
 
 .fixed {
-    position: fixed;
-    z-index: 20;
-    right: 0;
+  position: fixed;
+  z-index: 20;
+  right: 0;
 }
 
 .fixedContainer {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: black;
 }
 
+@media only screen and (max-width: 380px) {
+  .mobileNav {
+    display: flex !important;
+  }
+
+  .desktopNav {
+    display: none !important;
+  }
+}
+
+
+.mobileNav {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  display: none;
+  width: 100%;
+}
+
+.mobileNav #myLinks {
+  display: none;
+}
+
+.mobileNav a {
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  display: block;
+  text-align: left;
+}
+
+.mobileNav a.navBtn {
+  background: #333;
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin-right: 10px;
+  margin-top: 10px;
+}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import ContactPage from './components/ContactPage/ContactPage';
+import GalleryPage from './components/Gallery/GalleryPage';
+import HomePage from './components/HomePage/HomePage';
 import MainPage from './components/MainPage/MainPage';
 import Navigation from './components/Navigation/Navigation';
 
@@ -10,12 +12,11 @@ function App() {
 		<div className="App">
 			<Navigation />
 
-			<header id="welcome" className="App-header">
-				<h1 className='heading'>Welcome to BDimov</h1>
-			</header>
+			<HomePage />
 
 			<MainPage />
 			<ContactPage />
+			<GalleryPage />
 		</div>
 	);
 }

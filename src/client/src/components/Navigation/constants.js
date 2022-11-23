@@ -10,6 +10,10 @@ const navLinks = [
     {
         href: '#contact',
         title: 'Contact'
+    }, 
+    {
+        href: '#gallery',
+        title: 'Gallery'
     }
 ];
 

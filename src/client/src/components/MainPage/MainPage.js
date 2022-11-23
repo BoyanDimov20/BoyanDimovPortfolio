@@ -24,7 +24,7 @@ const MainPage = () => {
 
     }, []);
     return (
-        <section className={styles.section} id="aboutMe">
+        <section className='section' id="aboutMe">
             <div style={{ margin: 'auto' }}>
                 <ul ref={listRef} className={styles.checkList}>
                     <li>Studying Information Technologies in New Bulgarian University <Icon className={styles.mobileIcon} src="nbu-logo.jpg" /></li>

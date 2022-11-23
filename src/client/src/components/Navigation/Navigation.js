@@ -1,37 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import styles from './Navigation.module.css'
 import $ from "jquery";
 import navLinks from './constants';
 
 const Navigation = () => {
-
-    useEffect(() => {
-        window.addEventListener("scroll", () => {
-            const topBorder = document
-                .getElementById("navbar-container")
-                .getBoundingClientRect().top;
-
-            if (topBorder >= 0) {
-                document.getElementById('nav').classList.remove(styles.fixed);
-            } else {
-                document.getElementById('nav').classList.add(styles.fixed);
-            }
-
-        });
-    }, []);
-
+    const [navOpened, setNavOpened] = useState(false);
+    
     const navigate = (event, href) => {
         event.preventDefault();
+        if(navOpened) {
+            setNavOpened(false);
+        }
         const offsetTop = document.querySelector(href).offsetTop;
         $('html, body').stop().animate({ scrollTop: offsetTop }, 1500);
     }
     return (
         <section id="navbar-container">
-            <ul id="nav">
+            <ul className={styles.desktopNav + ' ' + styles.fixed} id="nav">
                 {navLinks.map(link =>
                     <li key={link.href}><a onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a></li>
                 )}
             </ul>
+            <div className={styles.mobileNav}>
+                <a className={styles.navBtn} onClick={() => setNavOpened(prev => !prev)}>
+                    <i className="fa fa-bars"></i>
+                </a>
+                {navOpened &&
+                    <div id="myLinks">
+                        {navLinks.map(link =>
+                            <a key={link.href} onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a>
+                        )}
+                    </div>
+                }
+            </div>
         </section>
     );
 };

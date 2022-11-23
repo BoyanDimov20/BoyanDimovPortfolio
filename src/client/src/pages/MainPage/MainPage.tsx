@@ -1,24 +1,29 @@
 import { useEffect, useRef } from 'react';
 import styles from './MainPage.module.css'
 import Icon from './Icon';
+import React from 'react';
 
 const MainPage = () => {
-    const listRef = useRef(null);
+    const listRef = useRef<HTMLUListElement>(null);
     useEffect(() => {
         window.addEventListener("scroll", () => {
             const topBorder = document
                 .getElementById("navbar-container")
-                .getBoundingClientRect().top;
+                ?.getBoundingClientRect().top;
 
-            if (topBorder < 0) {
+            if (topBorder && topBorder < 0) {
                 var intervalTime = 1000;
-                [...listRef.current.children].forEach(el => {
-                    setTimeout(() => {
-                        el.style.display = 'flex';
-                    }, intervalTime);
-
-                    intervalTime += 500;
-                });
+                if(listRef.current) {
+                    [...listRef.current.children].forEach(el => {
+                        setTimeout(() => {
+                            (el as HTMLElement).style.display = 'flex';
+                            
+                        }, intervalTime);
+    
+                        intervalTime += 500;
+                    });
+                }
+                
             }
         });
 

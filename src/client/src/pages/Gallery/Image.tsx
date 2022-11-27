@@ -1,4 +1,4 @@
-import { useState, ReactDOM, useEffect, useRef, KeyboardEvent } from 'react';
+import { useState, ReactDOM, useEffect, useRef, KeyboardEvent, MouseEvent } from 'react';
 import styles from './GalleryPage.module.css'
 import Portal from '../../helpers/Portal';
 import contactStyles from '../ContactPage/ContactPage.module.css';
@@ -9,7 +9,7 @@ interface ImageProperties {
     src: string
 };
 
-const Image = ({ src } : ImageProperties) => {
+const Image = ({ src }: ImageProperties) => {
 
     const [dialogOpened, setDialogOpened] = useState(false);
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -33,21 +33,35 @@ const Image = ({ src } : ImageProperties) => {
         }
     }, [dialogOpened]);
 
-    const enterPressedHandler = (event : KeyboardEvent<HTMLInputElement>) => {
+    const enterPressedHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.keyCode === 13 &&
-            commentInputRef.current &&
-            commentInputRef.current == document.activeElement &&
+            commentInputRef.current == document.activeElement) {
+
+            sendComment();
+        }
+    };
+
+    const clickButtonHandler = (event: MouseEvent<HTMLSpanElement>) => {
+        sendComment();
+    }
+
+    const sendComment = () => {
+        if (commentInputRef.current &&
             commentInputRef.current.value != '') {
 
             const current = commentInputRef.current.value.slice();
+
             setComments(prev => {
                 const newComment = [...prev, { author: 'Boyan', comment: current }];
-                if(commentInputRef.current)
+                if (commentInputRef.current)
                     commentInputRef.current.value = '';
                 return newComment;
             });
+
         }
+
     };
+
     return (
         <>
             <img onClick={handleClick} className={styles.img} src={src} />
@@ -61,7 +75,12 @@ const Image = ({ src } : ImageProperties) => {
                             {comments.map((x, i) =>
                                 <Comment key={i} author={x.author} comment={x.comment} />
                             )}
-                            <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />
+                            <div className={styles.btnContainer}>
+                                <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />
+                                <span onClick={clickButtonHandler} className={styles.sendBtn}>
+                                    <i className="fa fa-paper-plane" style={{ color: '#3ea6ff' }} aria-hidden="true"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </Portal>

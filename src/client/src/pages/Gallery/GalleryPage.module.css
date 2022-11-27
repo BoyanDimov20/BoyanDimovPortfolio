@@ -130,11 +130,32 @@
     outline: 0;
     padding: 8px 20px 8px 15px;
     width: 100%;
-    margin-bottom: 20px;
     border: 1px solid #303245;
     max-width: 360px;
 }
 
 .input:focus {
     border: 1px solid #3ea6ff;
+}
+
+.btnContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    column-gap: 8px;
+}
+
+.sendBtn:hover {
+    border: 1px solid white;
+    padding: 8px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.sendBtn {
+    border: 1px solid #303245;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
 }

@@ -99,12 +99,14 @@
     animation-name: fadein;
     animation-duration: 500ms;
     position: relative;
+    min-width: 100px;
 }
 
 @keyframes fadein {
     from {
         left: 40px;
     }
+
     to {
         left: 0px;
     }
@@ -158,4 +160,29 @@
     padding: 8px;
     border-radius: 50%;
     cursor: pointer;
+}
+
+.editBtn {
+    float: right;
+    cursor: pointer;
+}
+
+.editOptionsList {
+    position: absolute;
+    background-color: white;
+    color: black;
+    list-style-type: none;
+    left: 120px;
+    top: 30px;
+    z-index: 1;
+}
+
+
+.editOptionsItem {
+    cursor: pointer;
+    padding: 16px 16px 16px 16px;
+}
+
+.editOptionsItem:hover {
+    box-shadow: 0 0 11px rgba(33, 33, 33, .2);
 }

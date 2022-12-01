@@ -23,6 +23,7 @@ const Navigation = () => {
                     <li key={link.href}><a onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a></li>
                 )}
             </ul>
+            
             <div className={styles.mobileNav}>
                 <a className={styles.navBtn} onClick={() => setNavOpened(prev => !prev)}>
                     <i className="fa fa-bars"></i>

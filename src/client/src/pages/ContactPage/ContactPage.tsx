@@ -27,7 +27,7 @@ const ContactPage = () => {
         rows: 6
     });
 
-    const changeInputHandler = (event: ChangeEvent<HTMLInputElement>, stateFunction: Dispatch<SetStateAction<InputProperties>> ) => {
+    const changeInputHandler = (event: ChangeEvent<HTMLInputElement>, stateFunction: Dispatch<SetStateAction<InputProperties>>) => {
         stateFunction(prev => {
             const copy = { ...prev };
             copy.value = event.target.value;
@@ -37,7 +37,7 @@ const ContactPage = () => {
         });
     };
 
-    const changeTextAreaHandler = (event: ChangeEvent<HTMLTextAreaElement>, stateFunction: Dispatch<SetStateAction<TextAreaProperties>> ) => {
+    const changeTextAreaHandler = (event: ChangeEvent<HTMLTextAreaElement>, stateFunction: Dispatch<SetStateAction<TextAreaProperties>>) => {
         stateFunction(prev => {
             const copy = { ...prev };
             copy.value = event.target.value;
@@ -46,6 +46,16 @@ const ContactPage = () => {
             return copy;
         });
     };
+
+    const clearField = (stateFunction: Dispatch<SetStateAction<any>>) => {
+        stateFunction((prev : any) => {
+            const copy = { ...prev };
+            copy.value = '';
+
+            return copy;
+        });
+    };
+
 
     const sendMessage = () => {
         if (emailState.value == '') {
@@ -75,6 +85,10 @@ const ContactPage = () => {
 
         if (emailState.value != '' && subjectState.value != '' && contentState.value != '') {
 
+            clearField(setEmailState);
+            clearField(setSubjectState);
+            clearField(setContentState);
+            
             Swal.fire({
                 title: 'Good job!',
                 text: 'Your email was sent successfully.',

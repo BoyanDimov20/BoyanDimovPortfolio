@@ -112,6 +112,30 @@
     }
 }
 
+@keyframes fadeout {
+    from {
+        left: 0;
+    }
+
+    to {
+        left: 100px;
+    }
+}
+
+.commentBoxFadeOut {
+    border-radius: 12px;
+    background-color: #3A3B3C;
+    padding: 16px 16px 8px 16px;
+    color: white;
+    margin-left: 10px;
+    margin-bottom: 8px;
+    animation-name: fadeout;
+    animation-duration: 200ms;
+    position: relative;
+    min-width: 100px;
+}
+
+
 .comment {
     padding: 4px;
 }

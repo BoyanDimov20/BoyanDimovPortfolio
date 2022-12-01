@@ -5,8 +5,13 @@ import contactStyles from '../ContactPage/ContactPage.module.css';
 import Comment, { CommentProperties } from './Comment';
 import React from 'react';
 
-interface ImageProperties {
+type ImageProperties = {
     src: string
+};
+
+type CommentType  = {
+    author: string,
+    comment: string
 };
 
 const Image = ({ src }: ImageProperties) => {
@@ -15,7 +20,7 @@ const Image = ({ src }: ImageProperties) => {
     const commentInputRef = useRef<HTMLInputElement>(null);
 
 
-    const [comments, setComments] = useState([] as CommentProperties[]);
+    const [comments, setComments] = useState([] as CommentType[]);
 
     const handleClick = () => {
         setDialogOpened(true);
@@ -59,7 +64,10 @@ const Image = ({ src }: ImageProperties) => {
             });
 
         }
+    };
 
+    const deleteComment = (comment : CommentType) => {
+        setComments(prev => prev.filter(x => x != comment));
     };
 
     return (
@@ -71,9 +79,9 @@ const Image = ({ src }: ImageProperties) => {
                         <span className={styles.close} onClick={() => setDialogOpened(false)}>&times;</span>
                         <img className={styles.modalImg} src={src} />
                         <div className={styles.commentSection} style={{ overflowX: comments.length >= 3 ? 'auto' : 'unset', minHeight: comments.length >= 3 ? '50%' : 'unset' }}>
-                            <Comment author="Boyan" comment="Haha :D" />
+                            <Comment onDeleteComment={() => console.log('Deleted')} author="Boyan" comment="Haha :D" />
                             {comments.map((x, i) =>
-                                <Comment key={i} author={x.author} comment={x.comment} />
+                                <Comment onDeleteComment={() => deleteComment(x)} key={i} author={x.author} comment={x.comment} />
                             )}
                             <div className={styles.btnContainer}>
                                 <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />

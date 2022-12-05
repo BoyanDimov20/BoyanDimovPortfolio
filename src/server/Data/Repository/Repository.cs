@@ -24,18 +24,14 @@ namespace Data.Repository
             await this.dbContext.SaveChangesAsync();
         }
 
-        public async Task<ICollection<T>> GetAll<T>() where T : class, IEntity
+        public IQueryable<T> GetAll<T>() where T : class, IEntity
         {
-            var entities = await this.dbContext.Set<T>().ToListAsync();
-
-            return entities;
+            return this.dbContext.Set<T>().AsQueryable<T>();
         }
 
-        public async Task<T> GetById<T> (string id) where T : class, IEntity
+        public IQueryable<T> GetById<T> (string id) where T : class, IEntity
         {
-            var result = await this.dbContext.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
-
-            return result;
+            return this.dbContext.Set<T>().Take(1);
         }
 
         public async Task Update(IEntity entity)

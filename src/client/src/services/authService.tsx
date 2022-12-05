@@ -16,7 +16,8 @@ const fetchCurrentUser = async () => {
 export const useCurrentUser = () => {
 
 	const query = useQuery('me', fetchCurrentUser, {
-		staleTime: 10000
+		staleTime: 10000,
+        refetchOnWindowFocus: false
 	});
     return query.data as UserProperties;
 }

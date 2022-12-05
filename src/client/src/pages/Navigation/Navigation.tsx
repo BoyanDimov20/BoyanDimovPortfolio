@@ -7,6 +7,7 @@ import Portal from '../../helpers/Portal';
 import Login from '../LoginPage/Login';
 import { useCurrentUser } from '../../services/authService';
 import { useQueryClient } from 'react-query';
+import Swal from 'sweetalert2';
 
 const Navigation = () => {
     const [navOpened, setNavOpened] = useState(false);
@@ -61,7 +62,8 @@ const Navigation = () => {
     };
 
     const submitImage = () => {
-        if (!fileUpload.current?.files) {
+        debugger;
+        if (!fileUpload.current?.files?.length) {
             return;
         }
 
@@ -72,29 +74,43 @@ const Navigation = () => {
             method: 'POST',
             credentials: 'include',
             body: data
-        })
-            .then(x => x.text())
-            .then(x => console.log(x));
+        }).then(x => {
+            if (x.ok) {
+                console.log('lol')
+                queryClient.invalidateQueries('images');
+                Swal.fire({
+                    title: 'Good job!',
+                    text: 'Meme uploaded successfully!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+
     };
 
     return (
         <section id="navbar-container">
             {!loginOpened &&
                 <>
-                    <ul className={styles.desktopNav + ' ' + styles.fixed} id="nav">
+                    <ul className={styles.desktopNav} id="nav">
                         {navLinks.map(link =>
                             <li key={link.href}><a onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a></li>
                         )}
-                        {!userData?.isAuthenticated ?
-                            <li><a onClick={openLoginModal} href="#">Login</a></li>
-                            : <li><a onClick={logoutHandler} href="#">Logout</a></li>
-                        }
-                        {userData?.isAuthenticated ?
-                            <li>
-                                <a onClick={uploadImage} href="#">Upload</a>
-                            </li>
-                            : null
-                        }
+
+                        <div style={{ display: 'flex', marginLeft: 'auto' }}>
+                            {userData?.isAuthenticated ?
+                                <li>
+                                    <a onClick={uploadImage} href="#">Upload</a>
+                                </li>
+                                : null
+                            }
+                            {!userData?.isAuthenticated ?
+                                <li><a onClick={openLoginModal} href="#">Login</a></li>
+                                : <li><a onClick={logoutHandler} href="#">Logout</a></li>
+                            }
+                        </div>
 
                     </ul>
 

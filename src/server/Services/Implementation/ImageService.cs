@@ -1,6 +1,8 @@
 ﻿using Data.DbModels;
 using Data.Repository;
+using Microsoft.EntityFrameworkCore;
 using Services.Contracts;
+using Services.Dtos.ImageDtos;
 
 namespace Services.Implementation
 {
@@ -23,6 +25,17 @@ namespace Services.Implementation
             };
 
             await this.repository.Add(image);
+        }
+
+        public async Task<IEnumerable<ImageDto>> GetAll()
+        {
+            var images = await this.repository.GetAll<Image>().Select(x => new ImageDto
+            {
+                Id = x.Id,
+                Url = x.Url
+            }).ToListAsync();
+
+            return images;
         }
     }
 }

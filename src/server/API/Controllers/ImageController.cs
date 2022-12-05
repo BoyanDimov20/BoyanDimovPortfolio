@@ -23,6 +23,13 @@ namespace API.Controllers
             this.userManager = userManager;
         }
 
+        public async Task<IActionResult> GetAll()
+        {
+            var images = await this.imageService.GetAll();
+
+            return this.Ok(images);
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Post(IFormFile file)

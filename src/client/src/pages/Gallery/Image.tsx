@@ -4,19 +4,23 @@ import Portal from '../../helpers/Portal';
 import contactStyles from '../ContactPage/ContactPage.module.css';
 import Comment, { CommentProperties } from './Comment';
 import React from 'react';
+import useDialogVisibility from './hooks/useDialog';
+import { createSignalRContext } from 'react-signalr';
+
+const { useSignalREffect, invoke } = createSignalRContext();
 
 type ImageProperties = {
     src: string
 };
 
-type CommentType  = {
+type CommentType = {
     author: string,
     comment: string
 };
 
 const Image = ({ src }: ImageProperties) => {
 
-    const [dialogOpened, setDialogOpened] = useState(false);
+    const [dialogOpened, setDialogOpened] = useDialogVisibility();
     const commentInputRef = useRef<HTMLInputElement>(null);
 
 
@@ -26,17 +30,7 @@ const Image = ({ src }: ImageProperties) => {
         setDialogOpened(true);
     };
 
-    useEffect(() => {
-        const navigation = document.getElementById('nav');
-        if (navigation) {
 
-            if (dialogOpened) {
-                navigation.style.display = 'none';
-            } else {
-                navigation.style.display = '';
-            }
-        }
-    }, [dialogOpened]);
 
     const enterPressedHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.keyCode === 13 &&
@@ -56,19 +50,27 @@ const Image = ({ src }: ImageProperties) => {
 
             const current = commentInputRef.current.value.slice();
 
+            invoke('SendComment', current);
+            /*
             setComments(prev => {
                 const newComment = [...prev, { author: 'Boyan', comment: current }];
                 if (commentInputRef.current)
                     commentInputRef.current.value = '';
                 return newComment;
             });
+            */
 
         }
     };
 
-    const deleteComment = (comment : CommentType) => {
+    const deleteComment = (comment: CommentType) => {
         setComments(prev => prev.filter(x => x != comment));
     };
+
+    useSignalREffect('ReceiveComment', (comment: string) => {
+        console.log(comment);
+        setComments(prev => [...prev, { author: 'Boyan', comment: JSON.stringify(comment) }]);
+    }, []);
 
     return (
         <>

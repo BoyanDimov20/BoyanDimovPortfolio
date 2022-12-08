@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useRef } from 'react';
 import { InputProperties } from './Input';
 import styles from './Input.module.css';
 
@@ -27,6 +27,16 @@ const TextArea = ({ value, placeholder, onChange, errorMessage, rows }: TextArea
             <textarea rows={rows} className={classList} value={value} onChange={onChange} placeholder={placeholder} />
         </>
     );
+};
+
+export const ChangeTextAreaEventHandler = (event: ChangeEvent<HTMLTextAreaElement>, stateFunction: Dispatch<SetStateAction<TextAreaProperties>>) => {
+    stateFunction(prev => {
+        const copy = { ...prev };
+        copy.value = event.target.value;
+        copy.errorMessage = '';
+
+        return copy;
+    });
 };
 
 export default TextArea;

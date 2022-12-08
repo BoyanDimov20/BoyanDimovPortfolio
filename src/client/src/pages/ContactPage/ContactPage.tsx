@@ -2,8 +2,8 @@ import styles from './ContactPage.module.css';
 import Swal from 'sweetalert2';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import React from 'react';
-import Input, { InputProperties } from '../../components/Input/Input';
-import TextArea, { TextAreaProperties } from '../../components/Input/TextArea';
+import Input, { ChangeInputEventHandler, InputProperties } from '../../components/Input/Input';
+import TextArea, { ChangeTextAreaEventHandler, TextAreaProperties } from '../../components/Input/TextArea';
 
 
 
@@ -27,25 +27,7 @@ const ContactPage = () => {
         rows: 6
     });
 
-    const changeInputHandler = (event: ChangeEvent<HTMLInputElement>, stateFunction: Dispatch<SetStateAction<InputProperties>>) => {
-        stateFunction(prev => {
-            const copy = { ...prev };
-            copy.value = event.target.value;
-            copy.errorMessage = '';
-
-            return copy;
-        });
-    };
-
-    const changeTextAreaHandler = (event: ChangeEvent<HTMLTextAreaElement>, stateFunction: Dispatch<SetStateAction<TextAreaProperties>>) => {
-        stateFunction(prev => {
-            const copy = { ...prev };
-            copy.value = event.target.value;
-            copy.errorMessage = '';
-
-            return copy;
-        });
-    };
+    
 
     const clearField = (stateFunction: Dispatch<SetStateAction<any>>) => {
         stateFunction((prev : any) => {
@@ -103,9 +85,9 @@ const ContactPage = () => {
         <section className={styles.section} id="contact">
             <div className={styles.form}>
                 <h1 className={styles.title}>Contact Me</h1>
-                <Input {...emailState} onChange={(event) => changeInputHandler(event, setEmailState)} />
-                <Input {...subjectState} onChange={(event) => changeInputHandler(event, setSubjectState)} />
-                <TextArea {...contentState} onChange={(event) => changeTextAreaHandler(event, setContentState)} />
+                <Input {...emailState} onChange={(event) => ChangeInputEventHandler(event, setEmailState)} />
+                <Input {...subjectState} onChange={(event) => ChangeInputEventHandler(event, setSubjectState)} />
+                <TextArea {...contentState} onChange={(event) => ChangeTextAreaEventHandler(event, setContentState)} />
                 <button className={styles.btn} type="button" onClick={sendMessage}>Send</button>
             </div>
         </section>

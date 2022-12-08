@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import styles from './Input.module.css';
 
 export interface InputProperties {
@@ -12,7 +12,7 @@ export interface InputProperties {
 const Input = ({ value, placeholder, type, onChange, errorMessage }: InputProperties) => {
 
     let className = styles.input;
-
+    
     if (errorMessage) {
         className += ' ' + styles.inputError;
     }
@@ -26,6 +26,16 @@ const Input = ({ value, placeholder, type, onChange, errorMessage }: InputProper
             <input className={className} value={value} onChange={onChange} placeholder={placeholder} type={type} />
         </>
     );
+};
+
+export const ChangeInputEventHandler = (event: ChangeEvent<HTMLInputElement>, stateFunction: Dispatch<SetStateAction<InputProperties>>) => {
+    stateFunction(prev => {
+        const copy = { ...prev };
+        copy.value = event.target.value;
+        copy.errorMessage = '';
+
+        return copy;
+    });
 };
 
 export default Input;

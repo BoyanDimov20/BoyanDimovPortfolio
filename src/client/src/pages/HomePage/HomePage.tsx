@@ -1,9 +1,11 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { useCurrentUser } from '../../services/authService';
 import styles from './HomePage.module.css'
 
 const HomePage = () => {
     const welcomeRef = useRef<HTMLHeadingElement>(null);
+    const userData = useCurrentUser();
 
     useEffect(() => {
         setTimeout(() => {
@@ -21,13 +23,17 @@ const HomePage = () => {
 
         }, 4000);
 
-    }, []);
+    }, [userData]);
 
     return (
         <header id="welcome" className="App-header">
-            <h1 ref={welcomeRef} className={styles.fadeIn}>Hi.</h1>
+            <h1 ref={welcomeRef} className={styles.fadeIn}>{userData?.isAuthenticated ? `Hi, ${userData.username}.` : 'Hi.'}</h1>
         </header>
     );
+
+
+
+
 };
 
 export default HomePage;

@@ -1,8 +1,8 @@
+using API.Hubs;
 using CloudinaryDotNet;
 using Data;
 using Data.DbModels;
 using Data.Repository;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services.Contracts;
@@ -11,8 +11,14 @@ using Services.Implementation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+const string DefaultCorsPolicyName = "Default";
+
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
 
 var path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 var DbPath = Path.Join(path, "portfolio.db");
@@ -58,6 +64,22 @@ var cloudinary = new Cloudinary(cloudinaryAccount);
 
 builder.Services.AddSingleton(cloudinary);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(DefaultCorsPolicyName, builder =>
+    {
+        builder
+            .WithOrigins("*")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
+
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -72,10 +94,17 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-
+app.UseCors(DefaultCorsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<CommentHub>("/comment").RequireCors(builder =>
+{
+    builder
+        .WithOrigins("http://localhost:3000")
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .WithMethods("GET", "POST");
+});
 app.Run();

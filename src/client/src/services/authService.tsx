@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 
 type UserProperties = {
@@ -14,10 +14,16 @@ const fetchCurrentUser = async () => {
 }
 
 export const useCurrentUser = () => {
+    const queryClient = useQueryClient();
 
-	const query = useQuery('me', fetchCurrentUser, {
-		staleTime: 10000,
+    const query = useQuery('me', fetchCurrentUser, {
+        staleTime: 10000,
         refetchOnWindowFocus: false
-	});
+    });
+
+    if (query.isSuccess) {
+        queryClient.invalidateQueries('auth');
+    }
+
     return query.data as UserProperties;
 }

@@ -48,6 +48,7 @@ const Navigation = () => {
             .then(x => {
                 if (x.ok) {
                     queryClient.invalidateQueries('me');
+                    queryClient.invalidateQueries('auth');
                 }
             });
     };

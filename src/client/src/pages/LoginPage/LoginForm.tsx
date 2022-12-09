@@ -28,18 +28,18 @@ const LoginForm = ({ close }: LoginFormProperties) => {
     const loginHandler = (event: MouseEvent<HTMLButtonElement>) => {
 
         // Validations
-        if(usernameState.value === '') {
+        if (usernameState.value === '') {
             setUsernameState(prev => {
-                const copy = {...prev};
+                const copy = { ...prev };
                 prev.errorMessage = 'Полето е задължително';
 
                 return copy;
             });
             return;
         }
-        if(passwordState.value === '') {
+        if (passwordState.value === '') {
             setPasswordState(prev => {
-                const copy = {...prev};
+                const copy = { ...prev };
                 prev.errorMessage = 'Полето е задължително';
 
                 return copy;
@@ -62,6 +62,10 @@ const LoginForm = ({ close }: LoginFormProperties) => {
             if (x.ok) {
                 close();
                 queryClient.invalidateQueries('me');
+                queryClient.invalidateQueries({
+                    queryKey: [, , 'auth']
+                });
+
                 Swal.fire({
                     title: 'Good job!',
                     text: 'Authenticated successfully!',
@@ -71,8 +75,8 @@ const LoginForm = ({ close }: LoginFormProperties) => {
                 });
             } else {
                 setPasswordState(prev => {
-                    const copy = {...prev};
-                    
+                    const copy = { ...prev };
+
                     copy.errorMessage = 'Грешна парола';
                     return copy;
                 });

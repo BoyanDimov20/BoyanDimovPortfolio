@@ -1,6 +1,10 @@
-﻿namespace Services.Contracts
+﻿using Services.Dtos.CommentDtos;
+
+namespace Services.Contracts
 {
-    internal interface ICommentService
+    public interface ICommentService
     {
+        Task<IEnumerable<GetCommentDto>> GetCommentsByImageId(string imageId, string currentUserId);
+        Task<string> AddComment(string content, string imageId, string userId);
     }
 }

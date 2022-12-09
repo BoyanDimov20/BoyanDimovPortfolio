@@ -5,32 +5,40 @@ import contactStyles from '../ContactPage/ContactPage.module.css';
 import Comment, { CommentProperties } from './Comment';
 import React from 'react';
 import useDialogVisibility from './hooks/useDialog';
-import { createSignalRContext } from 'react-signalr';
-
-const { useSignalREffect, invoke } = createSignalRContext();
+import { HubConnection } from '@microsoft/signalr';
+import { HubConnectionBuilder } from '@microsoft/signalr/dist/esm/HubConnectionBuilder';
+import { LogLevel } from '@microsoft/signalr/dist/esm/ILogger';
+import useHubConnection from './hooks/useHubConnection';
+import useListenHubConnection from './hooks/useListenHubConnection';
+import { CommentServiceProperties, useComments } from '../../services/commentService';
 
 type ImageProperties = {
-    src: string
+    src: string,
+    id: string
 };
 
-type CommentType = {
-    author: string,
-    comment: string
-};
-
-const Image = ({ src }: ImageProperties) => {
+const Image = ({ src, id }: ImageProperties) => {
 
     const [dialogOpened, setDialogOpened] = useDialogVisibility();
     const commentInputRef = useRef<HTMLInputElement>(null);
 
 
-    const [comments, setComments] = useState([] as CommentType[]);
+    const comments = useComments(id);
+    const [hubComments, setHubComments] = useState<CommentServiceProperties[]>([]);
 
-    const handleClick = () => {
-        setDialogOpened(true);
-    };
+    const connection = useHubConnection('commentHub', (connectionBuilder) => {
+        connectionBuilder.invoke('ConnectComment', id);
+        console.log('Connected to group');
+    });
 
-
+    useListenHubConnection(connection, 'ReceiveComment', (comment: string, commentId: string, username: string) => {
+        setHubComments(prev => {
+            const newComment = [...prev, { id: commentId, content: comment, username: username, isEditable: false }];
+            if (commentInputRef.current)
+                commentInputRef.current.value = '';
+            return newComment;
+        });
+    });
 
     const enterPressedHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.keyCode === 13 &&
@@ -40,54 +48,60 @@ const Image = ({ src }: ImageProperties) => {
         }
     };
 
-    const clickButtonHandler = (event: MouseEvent<HTMLSpanElement>) => {
-        sendComment();
-    }
-
     const sendComment = () => {
         if (commentInputRef.current &&
             commentInputRef.current.value != '') {
 
             const current = commentInputRef.current.value.slice();
 
-            invoke('SendComment', current);
-            /*
-            setComments(prev => {
-                const newComment = [...prev, { author: 'Boyan', comment: current }];
-                if (commentInputRef.current)
-                    commentInputRef.current.value = '';
-                return newComment;
-            });
-            */
+            if (current) {
+                fetch('/api/comment', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        imageId: id,
+                        content: current
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(async (x) => {
+                    if (x.ok) {
+                        if (commentInputRef.current)
+                            commentInputRef.current.value = '';
 
+                        const result = await x.json();
+
+                        connection?.invoke('SendComment', id, current, result.commentId, result.username);
+                    }
+                });
+            }
         }
     };
 
-    const deleteComment = (comment: CommentType) => {
-        setComments(prev => prev.filter(x => x != comment));
+    const deleteComment = (commentId: string) => {
+        //TODO
     };
 
-    useSignalREffect('ReceiveComment', (comment: string) => {
-        console.log(comment);
-        setComments(prev => [...prev, { author: 'Boyan', comment: JSON.stringify(comment) }]);
-    }, []);
 
     return (
         <>
-            <img onClick={handleClick} className={styles.img} src={src} />
+            <img onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
             {dialogOpened &&
                 <Portal id="modal-root">
                     <div className={styles.modal}>
                         <span className={styles.close} onClick={() => setDialogOpened(false)}>&times;</span>
                         <img className={styles.modalImg} src={src} />
-                        <div className={styles.commentSection} style={{ overflowX: comments.length >= 3 ? 'auto' : 'unset', minHeight: comments.length >= 3 ? '50%' : 'unset' }}>
-                            <Comment onDeleteComment={() => console.log('Deleted')} author="Boyan" comment="Haha :D" />
-                            {comments.map((x, i) =>
-                                <Comment onDeleteComment={() => deleteComment(x)} key={i} author={x.author} comment={x.comment} />
+                        <div className={styles.commentSection} style={{ overflowX: comments?.length >= 3 ? 'auto' : 'unset', minHeight: comments?.length >= 3 ? '50%' : 'unset' }}>
+                            {comments?.map((x) =>
+                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.username} comment={x.content} />
+                            )}
+                            {hubComments?.map((x) =>
+                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.username} comment={x.content} />
                             )}
                             <div className={styles.btnContainer}>
                                 <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />
-                                <span onClick={clickButtonHandler} className={styles.sendBtn}>
+                                <span onClick={() => sendComment()} className={styles.sendBtn}>
                                     <i className="fa fa-paper-plane" style={{ color: '#3ea6ff' }} aria-hidden="true"></i>
                                 </span>
                             </div>

@@ -59,6 +59,8 @@ builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 var cloudinaryAccount = new Account("logopediawiki", "251392618569756", "jVlazU72hmYAAgZ2CRTmiQUQzB8");
 var cloudinary = new Cloudinary(cloudinaryAccount);
 
@@ -99,7 +101,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<CommentHub>("/comment").RequireCors(builder =>
+app.MapHub<CommentHub>("/commentHub").RequireCors(builder =>
 {
     builder
         .WithOrigins("http://localhost:3000")

@@ -4,10 +4,11 @@ import styles from './GalleryPage.module.css'
 export interface CommentProperties {
     author: string,
     comment: string,
-    onDeleteComment: () => void
+    onDeleteComment: () => void,
+    isEditable: boolean
 };
 
-const Comment = ({ author, comment, onDeleteComment }: CommentProperties) => {
+const Comment = ({ author, comment, onDeleteComment, isEditable }: CommentProperties) => {
 
     const [isOpened, setIsOpened] = useState(false);
     const commentBoxRef = useRef<HTMLDivElement>(null);
@@ -16,17 +17,20 @@ const Comment = ({ author, comment, onDeleteComment }: CommentProperties) => {
 
         setIsOpened(false);
 
-        if(commentBoxRef.current)
+        if (commentBoxRef.current)
             commentBoxRef.current.className = styles.commentBoxFadeOut;
 
         setTimeout(() => {
             onDeleteComment();
         }, 200);
     };
-    
+
     return (
         <div ref={commentBoxRef} className={styles.commentBox}>
-            <span onClick={() => setIsOpened(prev => !prev)} className={styles.editBtn}><i className="fa fa-ellipsis-v" aria-hidden="true"></i></span>
+            {isEditable ?
+                <span onClick={() => setIsOpened(prev => !prev)} className={styles.editBtn}><i className="fa fa-ellipsis-v" aria-hidden="true"></i></span>
+                : <></>
+            }
 
             {isOpened ?
                 <div tabIndex={0} className={styles.editOptionsList}>

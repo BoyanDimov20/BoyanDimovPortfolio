@@ -5,23 +5,18 @@ import HomePage from './pages/HomePage/HomePage';
 import Login from './pages/LoginPage/Login';
 import MainPage from './pages/MainPage/MainPage';
 import Navigation from './pages/Navigation/Navigation';
-import { createSignalRContext } from "react-signalr";
-
-const { useSignalREffect, Provider } = createSignalRContext();
 
 function App() {
 
 	return (
 		<div className="App">
-			<Provider url="https://localhost:7186/comment">
-				<Navigation />
+			<Navigation />
 
-				<HomePage />
+			<HomePage />
 
-				<MainPage />
-				<ContactPage />
-				<GalleryPage />
-			</Provider>
+			<MainPage />
+			<ContactPage />
+			<GalleryPage />
 		</div>
 	);
 }

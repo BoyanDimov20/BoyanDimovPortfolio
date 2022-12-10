@@ -17,10 +17,12 @@ import { useCurrentUser } from '../../services/authService';
 
 type ImageProperties = {
     src: string,
-    id: string
+    id: string,
+    onDragStart: (event: React.DragEvent<HTMLImageElement>) => void,
+    onDragEnd: (event: React.DragEvent<HTMLImageElement>) => void
 };
 
-const Image = ({ src, id }: ImageProperties) => {
+const Image = ({ src, id, onDragStart, onDragEnd }: ImageProperties) => {
 
     const [dialogOpened, setDialogOpened] = useDialogVisibility();
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -28,20 +30,13 @@ const Image = ({ src, id }: ImageProperties) => {
     const currentUser = useCurrentUser();
 
     const comments = useComments(id);
-    const [hubComments, setHubComments] = useState<CommentServiceProperties[]>([]);
 
     const connection = useHubConnection('commentHub', (connectionBuilder) => {
         connectionBuilder.invoke('ConnectComment', id);
     });
 
-    useListenHubConnection(connection, 'ReceiveComment', (comment: string, commentId: string, username: string, name: string) => {
-        setHubComments(prev => {
-            debugger;
-            const newComment = [...prev, { id: commentId, content: comment, username: username, isEditable: false, name: name }];
-            if (commentInputRef.current)
-                commentInputRef.current.value = '';
-            return newComment;
-        });
+    useListenHubConnection(connection, 'NewComment', () => {
+        queryClient.invalidateQueries(queryConfig.getCommentByImageId.queryKey(id));
     });
 
     const enterPressedHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -76,7 +71,7 @@ const Image = ({ src, id }: ImageProperties) => {
 
                         const result = await x.json();
 
-                        connection?.invoke('SendComment', id, current, result.commentId, result.userId);
+                        connection?.invoke('SendComment', id);
                     }
                 });
             }
@@ -89,8 +84,7 @@ const Image = ({ src, id }: ImageProperties) => {
             method: 'DELETE'
         }).then(x => {
             if (x.ok) {
-                setHubComments([]);
-                queryClient.invalidateQueries(queryConfig.getCommentByImageId.queryKey(id))
+                connection?.invoke('SendComment', id);
             }
         })
     };
@@ -98,7 +92,7 @@ const Image = ({ src, id }: ImageProperties) => {
 
     return (
         <>
-            <img onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
+            <img draggable onDragEnd={onDragEnd} onDragStart={onDragStart} onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
             {dialogOpened &&
                 <Portal id="modal-root">
                     <div className={styles.modal}>
@@ -108,9 +102,6 @@ const Image = ({ src, id }: ImageProperties) => {
                             <h3 className={styles.commentHeading}>Остави коментар</h3>
                             {comments?.map((x) =>
                                 <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
-                            )}
-                            {hubComments?.map((x) =>
-                                <Comment isEditable={x.username == currentUser.username} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
                             )}
                             <div className={styles.btnContainer}>
                                 <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />

@@ -22,13 +22,18 @@
     width: 300px;
     height: 200px;
     border-radius: 5px;
-    cursor: pointer;
     transition: 0.3s;
+    cursor: move;
+    /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 }
 
 .img:hover {
     opacity: 0.7;
 }
+
 
 .modal {
 

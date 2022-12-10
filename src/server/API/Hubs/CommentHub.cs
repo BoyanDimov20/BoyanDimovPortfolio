@@ -12,10 +12,9 @@ namespace API.Hubs
             this.authService = authService;
         }
 
-        public async Task SendComment(string imageId,string comment, string commentId, string userId)
+        public async Task SendComment(string imageId)
         {
-            var user = await this.authService.GetUserById(userId);
-            await Clients.Group(imageId).SendAsync("ReceiveComment", comment, commentId, user.UserName, user.FirstName);
+            await Clients.Group(imageId).SendAsync("NewComment");
         }
 
         public async Task ConnectComment(string imageId)

@@ -8,6 +8,7 @@ import Login from '../LoginPage/Login';
 import { useCurrentUser } from '../../services/authService';
 import { useQueryClient } from 'react-query';
 import Swal from 'sweetalert2';
+import { queryConfig } from '../../services/queries';
 
 const Navigation = () => {
     const [navOpened, setNavOpened] = useState(false);
@@ -47,8 +48,8 @@ const Navigation = () => {
         fetch('/auth/logout')
             .then(x => {
                 if (x.ok) {
-                    queryClient.invalidateQueries('me');
-                    queryClient.invalidateQueries('auth');
+                    queryClient.invalidateQueries(queryConfig.getCurrentUser.queryKey);
+                    queryClient.invalidateQueries(queryConfig.getCommentByImageId.invalidationQueryKey);
                 }
             });
     };
@@ -77,8 +78,9 @@ const Navigation = () => {
             body: data
         }).then(x => {
             if (x.ok) {
-                console.log('lol')
-                queryClient.invalidateQueries('images');
+
+                queryClient.invalidateQueries(queryConfig.getImages.queryKey);
+
                 Swal.fire({
                     title: 'Good job!',
                     text: 'Meme uploaded successfully!',

@@ -66,10 +66,13 @@ namespace API.Controllers
 
         public async Task<IActionResult> Me()
         {
+            var user = await this.signInManger.UserManager.GetUserAsync(User);
             return Ok(new
             {
+                Id = user.Id,
                 IsAuthenticated = User.Identity.IsAuthenticated,
-                Username = User.Identity.Name
+                Name = user.FirstName,
+                Username = user.UserName
             });
         }
     }

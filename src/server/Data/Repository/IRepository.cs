@@ -1,4 +1,5 @@
 ﻿using Data.DbModels;
+using System.Linq.Expressions;
 
 namespace Data.Repository
 {
@@ -9,6 +10,8 @@ namespace Data.Repository
         Task Add(IEntity entity);
         Task Update(IEntity entity);
         Task Delete(IEntity entity);
+        Task DeleteById<T>(string id) where T : class, IEntity, new();
 
+        Task Delete<T>(Expression<Func<T, bool>> predicate) where T : class, IEntity;
     }
 }

@@ -46,8 +46,17 @@ namespace API.Controllers
             return Ok(new
             {
                 CommentId = commentId,
-                Username = user.FirstName
+                UserId = user.Id
             });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var userId = this.userManager.GetUserId(User);
+            await this.commentService.DeleteComment(id, userId);
+
+            return Ok();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Data.DbModels;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Data.Repository
 {
@@ -31,13 +32,31 @@ namespace Data.Repository
 
         public IQueryable<T> GetById<T> (string id) where T : class, IEntity
         {
-            return this.dbContext.Set<T>().Take(1);
+            return this.dbContext.Set<T>().Where(x => x.Id == id).Take(1);
         }
 
         public async Task Update(IEntity entity)
         {
             this.dbContext.Update(entity);
 
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteById<T>(string id) where T : class, IEntity, new()
+        {
+            var entity = new T
+            {
+                Id = id
+            };
+
+            this.dbContext.Remove(entity);
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete<T>(Expression<Func<T, bool>> predicate) where T : class, IEntity
+        {
+            var entities = this.dbContext.Set<T>().Where(predicate);
+            this.dbContext.RemoveRange(entities);
             await this.dbContext.SaveChangesAsync();
         }
     }

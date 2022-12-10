@@ -16,13 +16,12 @@ const Comment = ({ author, comment, onDeleteComment, isEditable }: CommentProper
     const deleteComment = () => {
 
         setIsOpened(false);
-
         if (commentBoxRef.current)
             commentBoxRef.current.className = styles.commentBoxFadeOut;
+            
+        onDeleteComment();
 
-        setTimeout(() => {
-            onDeleteComment();
-        }, 200);
+       
     };
 
     return (

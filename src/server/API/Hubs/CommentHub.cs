@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Services.Contracts;
 
 namespace API.Hubs
 {
     public class CommentHub : Hub
     {
-        public async Task SendComment(string imageId,string comment, string commentId, string username)
+        private readonly IAuthService authService;
+
+        public CommentHub(IAuthService authService)
         {
-            await Clients.Group(imageId).SendAsync("ReceiveComment", comment, commentId, username);
+            this.authService = authService;
+        }
+
+        public async Task SendComment(string imageId,string comment, string commentId, string userId)
+        {
+            var user = await this.authService.GetUserById(userId);
+            await Clients.Group(imageId).SendAsync("ReceiveComment", comment, commentId, user.UserName, user.FirstName);
         }
 
         public async Task ConnectComment(string imageId)

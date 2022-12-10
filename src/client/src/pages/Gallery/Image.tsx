@@ -11,6 +11,9 @@ import { LogLevel } from '@microsoft/signalr/dist/esm/ILogger';
 import useHubConnection from './hooks/useHubConnection';
 import useListenHubConnection from './hooks/useListenHubConnection';
 import { CommentServiceProperties, useComments } from '../../services/commentService';
+import { useQueryClient } from 'react-query';
+import { queryConfig } from '../../services/queries';
+import { useCurrentUser } from '../../services/authService';
 
 type ImageProperties = {
     src: string,
@@ -21,19 +24,20 @@ const Image = ({ src, id }: ImageProperties) => {
 
     const [dialogOpened, setDialogOpened] = useDialogVisibility();
     const commentInputRef = useRef<HTMLInputElement>(null);
-
+    const queryClient = useQueryClient();
+    const currentUser = useCurrentUser();
 
     const comments = useComments(id);
     const [hubComments, setHubComments] = useState<CommentServiceProperties[]>([]);
 
     const connection = useHubConnection('commentHub', (connectionBuilder) => {
         connectionBuilder.invoke('ConnectComment', id);
-        console.log('Connected to group');
     });
 
-    useListenHubConnection(connection, 'ReceiveComment', (comment: string, commentId: string, username: string) => {
+    useListenHubConnection(connection, 'ReceiveComment', (comment: string, commentId: string, username: string, name: string) => {
         setHubComments(prev => {
-            const newComment = [...prev, { id: commentId, content: comment, username: username, isEditable: false }];
+            debugger;
+            const newComment = [...prev, { id: commentId, content: comment, username: username, isEditable: false, name: name }];
             if (commentInputRef.current)
                 commentInputRef.current.value = '';
             return newComment;
@@ -41,7 +45,7 @@ const Image = ({ src, id }: ImageProperties) => {
     });
 
     const enterPressedHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.keyCode === 13 &&
+        if (event.key === 'Enter' &&
             commentInputRef.current == document.activeElement) {
 
             sendComment();
@@ -72,7 +76,7 @@ const Image = ({ src, id }: ImageProperties) => {
 
                         const result = await x.json();
 
-                        connection?.invoke('SendComment', id, current, result.commentId, result.username);
+                        connection?.invoke('SendComment', id, current, result.commentId, result.userId);
                     }
                 });
             }
@@ -80,7 +84,15 @@ const Image = ({ src, id }: ImageProperties) => {
     };
 
     const deleteComment = (commentId: string) => {
-        //TODO
+        fetch(`/api/comment?id=${commentId}`, {
+            credentials: 'include',
+            method: 'DELETE'
+        }).then(x => {
+            if (x.ok) {
+                setHubComments([]);
+                queryClient.invalidateQueries(queryConfig.getCommentByImageId.queryKey(id))
+            }
+        })
     };
 
 
@@ -93,11 +105,12 @@ const Image = ({ src, id }: ImageProperties) => {
                         <span className={styles.close} onClick={() => setDialogOpened(false)}>&times;</span>
                         <img className={styles.modalImg} src={src} />
                         <div className={styles.commentSection} style={{ overflowX: comments?.length >= 3 ? 'auto' : 'unset', minHeight: comments?.length >= 3 ? '50%' : 'unset' }}>
+                            <h3 className={styles.commentHeading}>Остави коментар</h3>
                             {comments?.map((x) =>
-                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.username} comment={x.content} />
+                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
                             )}
                             {hubComments?.map((x) =>
-                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.username} comment={x.content} />
+                                <Comment isEditable={x.username == currentUser.username} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
                             )}
                             <div className={styles.btnContainer}>
                                 <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />

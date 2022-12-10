@@ -9,4 +9,6 @@ public class GetCommentDto
     public string Username { get; set; }
 
     public bool IsEditable { get; set; }
+
+    public string Name { get; set; }
 }

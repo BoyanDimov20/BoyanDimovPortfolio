@@ -23,7 +23,8 @@ public class CommentService : ICommentService
             {
                 Id = x.Id,
                 Content = x.Content,
-                Username = x.User.FirstName,
+                Username = x.User.UserName,
+                Name = x.User.FirstName,
                 IsEditable = x.UserId == currentUserId
             }).ToListAsync();
 
@@ -42,5 +43,17 @@ public class CommentService : ICommentService
         });
 
         return id;
+    }
+
+    public async Task DeleteComment(string commentId, string userId)
+    {
+        var commentOwnerId = await this.repository.GetById<Comment>(commentId).Select(x => x.UserId).FirstOrDefaultAsync();
+
+        if (commentOwnerId != userId)
+        {
+            return;
+        }
+
+        await this.repository.DeleteById<Comment>(commentId);
     }
 }

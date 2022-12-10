@@ -1,4 +1,5 @@
 import { useQuery } from "react-query";
+import { queryConfig } from "./queries";
 
 type ImageProperties = {
     id: string,
@@ -7,7 +8,7 @@ type ImageProperties = {
 
 const fetchImages = async () => {
 
-    const images = await fetch('/api/image', {
+    const images = await fetch(queryConfig.getImages.url, {
         credentials: 'include'
     });
 
@@ -16,7 +17,7 @@ const fetchImages = async () => {
 };
 
 export const useImages = () => {
-    const query = useQuery('images', fetchImages, {
+    const query = useQuery(queryConfig.getImages.queryKey, fetchImages, {
 		staleTime: 10000,
         refetchOnWindowFocus: false
 	});

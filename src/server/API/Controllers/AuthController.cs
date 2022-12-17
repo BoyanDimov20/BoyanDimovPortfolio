@@ -69,10 +69,10 @@ namespace API.Controllers
             var user = await this.signInManger.UserManager.GetUserAsync(User);
             return Ok(new
             {
-                Id = user.Id,
+                Id = user?.Id,
                 IsAuthenticated = User.Identity.IsAuthenticated,
-                Name = user.FirstName,
-                Username = user.UserName
+                Name = user?.FirstName,
+                Username = user?.UserName
             });
         }
     }

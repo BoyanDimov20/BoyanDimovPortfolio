@@ -64,32 +64,57 @@ const Navigation = () => {
     };
 
     const submitImage = () => {
-        debugger;
         if (!fileUpload.current?.files?.length) {
             return;
         }
 
-        var data = new FormData();
+        Swal.fire({
+            title: 'Meme title?:',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Upload',
+            showLoaderOnConfirm: true,
+            preConfirm: (title) => {
+                if (!fileUpload.current?.files?.length) {
+                    return;
+                }
+                var data = new FormData();
 
-        data.append('file', fileUpload.current?.files[0]);
-        fetch('/api/image', {
-            method: 'POST',
-            credentials: 'include',
-            body: data
-        }).then(x => {
-            if (x.ok) {
+                data.append('file', fileUpload.current?.files[0]);
+                data.append('title', title);
 
-                queryClient.invalidateQueries(queryConfig.getImages.queryKey);
+                return fetch('/api/image', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: data
+                }).then(x => {
+                    if (x.ok) {
+                        queryClient.invalidateQueries(queryConfig.getImages.queryKey);
 
-                Swal.fire({
-                    title: 'Good job!',
-                    text: 'Meme uploaded successfully!',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500
+                        Swal.fire({
+                            title: 'Good job!',
+                            text: 'Meme uploaded successfully!',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        if(fileUpload.current)
+                            fileUpload.current.value = '';
+                    }
+                }).catch(err => {
+
+                    Swal.showValidationMessage(
+                        `Request failed: ${err}`
+                    )
                 });
-            }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
         });
+
 
     };
 
@@ -141,7 +166,7 @@ const Navigation = () => {
                 </Portal>
                 : null
             }
-            <input ref={fileUpload} onChange={submitImage} type="file" accept='image/*' hidden></input>
+            <input ref={fileUpload} onInput={submitImage} type="file" accept='image/*' hidden></input>
 
         </section>
     );

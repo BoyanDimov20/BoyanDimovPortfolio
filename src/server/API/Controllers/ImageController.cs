@@ -1,4 +1,5 @@
-﻿using CloudinaryDotNet;
+﻿using API.ApiModels.Images;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Data.DbModels;
 using Microsoft.AspNetCore.Authorization;
@@ -32,22 +33,44 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Post(IFormFile file)
+        public async Task<IActionResult> Post([FromForm]CreateImageModel model)
         {
             var uploadResult = new ImageUploadResult();
-            if (file.Length > 0)
+            if (model.File.Length > 0)
             {
-                using var stream = file.OpenReadStream();
+                using var stream = model.File.OpenReadStream();
                 var uploadParams = new ImageUploadParams()
                 {
-                    File = new FileDescription(file.Name, stream)
+                    File = new FileDescription(model.File.Name, stream)
                 };
 
                 uploadResult = cloudinary.Upload(uploadParams);
             }
 
             var userId = this.userManager.GetUserId(User);
-            await this.imageService.CreateImage(userId, file.Name, uploadResult.SecureUrl.ToString());
+
+            await this.imageService.CreateImage(userId, model.Title, uploadResult.SecureUrl.ToString(), uploadResult.PublicId);
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var image = await this.imageService.GetImagePublicId(id);
+            var currentUserId = this.userManager.GetUserId(User);
+
+            if (currentUserId != image.UserId)
+            {
+                return this.Unauthorized();
+            }
+
+            var result = cloudinary.DeleteResources(ResourceType.Image, image.PublicId);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                await this.imageService.DeleteImage(id);
+            }
 
             return Ok();
         }

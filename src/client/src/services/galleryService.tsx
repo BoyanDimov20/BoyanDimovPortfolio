@@ -3,7 +3,9 @@ import { queryConfig } from "./queries";
 
 type ImageProperties = {
     id: string,
-    url: string
+    url: string,
+    title: string,
+    username: string
 };
 
 const fetchImages = async () => {

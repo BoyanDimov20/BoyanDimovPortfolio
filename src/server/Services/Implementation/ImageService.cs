@@ -15,13 +15,14 @@ namespace Services.Implementation
             this.repository = repository;
         }
 
-        public async Task CreateImage(string userId, string title, string url)
+        public async Task CreateImage(string userId, string title, string url, string publicId)
         {
             var image = new Image
             {
                 UserId = userId,
                 Title = title,
-                Url = url
+                Url = url,
+                PublicId = publicId
             };
 
             await this.repository.Add(image);
@@ -32,10 +33,28 @@ namespace Services.Implementation
             var images = await this.repository.GetAll<Image>().Select(x => new ImageDto
             {
                 Id = x.Id,
-                Url = x.Url
+                Url = x.Url,
+                Title = x.Title,
+                Username = x.User.UserName
             }).ToListAsync();
 
             return images;
+        }
+
+        public async Task<GetImagePublicIdDto> GetImagePublicId(string id)
+        {
+            var publicId = await this.repository.GetById<Image>(id).Select(x => new GetImagePublicIdDto
+            {
+                PublicId = x.PublicId,
+                UserId = x.UserId
+            }).FirstOrDefaultAsync();
+
+            return publicId;
+        }
+
+        public async Task DeleteImage(string id)
+        {
+            await this.repository.DeleteById<Image>(id);
         }
     }
 }

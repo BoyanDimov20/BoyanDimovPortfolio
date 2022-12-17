@@ -18,11 +18,13 @@ import { useCurrentUser } from '../../services/authService';
 type ImageProperties = {
     src: string,
     id: string,
+    author: string,
+    title: string,
     onDragStart: (event: React.DragEvent<HTMLImageElement>) => void,
     onDragEnd: (event: React.DragEvent<HTMLImageElement>) => void
 };
 
-const Image = ({ src, id, onDragStart, onDragEnd }: ImageProperties) => {
+const Image = ({ src, id, author, title, onDragStart, onDragEnd }: ImageProperties) => {
 
     const [dialogOpened, setDialogOpened] = useDialogVisibility();
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -92,7 +94,14 @@ const Image = ({ src, id, onDragStart, onDragEnd }: ImageProperties) => {
 
     return (
         <>
-            <img draggable onDragEnd={onDragEnd} onDragStart={onDragStart} onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
+            <div className={styles.img}>
+                <img draggable onDragEnd={onDragEnd} onDragStart={onDragStart} onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
+                <div className={styles.description}>
+                    <div className={styles.title}>{title}</div>
+                    <div>Author: {author}</div>
+                </div>
+            </div>
+
             {dialogOpened &&
                 <Portal id="modal-root">
                     <div className={styles.modal}>

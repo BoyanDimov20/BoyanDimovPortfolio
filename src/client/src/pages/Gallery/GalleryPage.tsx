@@ -1,12 +1,15 @@
 import React, { DragEvent, DragEventHandler, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import Swal from 'sweetalert2';
 import { useImages } from '../../services/galleryService';
+import { queryConfig } from '../../services/queries';
 import styles from './GalleryPage.module.css'
 import Image from './Image';
 
 const GalleryPage = () => {
 
     const images = useImages();
+    const queryClient = useQueryClient();
     const [draggedItem, setDraggedItem] = useState<string>();
     const [showDeleteIcon, setDeleteIcon] = useState(false);
     const dragOverHandler = (event: DragEvent<HTMLSpanElement>) => {
@@ -39,24 +42,43 @@ const GalleryPage = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+
+        }).then(async (result) => {
+
             if (result.isConfirmed) {
-                Swal.fire(
-                    'Deleted!',
-                    'Your meme has been deleted.',
-                    'success'
-                );
-                console.log('Deleted: ' + draggedItem);
+
+                const response = await fetch(`/api/image?id=${draggedItem}`, {
+                    credentials: 'include',
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    queryClient.invalidateQueries(queryConfig.getImages.queryKey);
+
+                    Swal.fire(
+                        'Deleted!',
+                        'Your meme has been deleted.',
+                        'success'
+                    );
+                }
+                else if (response.status === 401) {
+                    Swal.fire(
+                        'Unauthorized!',
+                        'You are not the owner of this meme.',
+                        'error'
+                    );
+                }
+
             }
             setDraggedItem('');
-        })
+        });
     };
 
     return (
         <section id="gallery" className="section">
             <div className={styles.gallery}>
                 {images?.map(x =>
-                    <Image onDragEnd={onDragEnd} onDragStart={(event) => onDragStart(event, x.id)} key={x.id} id={x.id} src={x.url} />
+                    <Image onDragEnd={onDragEnd} onDragStart={(event) => onDragStart(event, x.id)} key={x.id} id={x.id} src={x.url} title={x.title} author={x.username} />
                 )}
             </div>
             {showDeleteIcon ?

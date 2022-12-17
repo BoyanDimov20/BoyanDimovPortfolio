@@ -9,7 +9,7 @@ const useHubConnection = (hubName: string, afterStartedConnection?: (connection:
     useEffect(() => {
         try {
             const connectionBuilder = new HubConnectionBuilder()
-                .withUrl('https://localhost:7186/' + hubName)
+                .withUrl(process.env.PUBLIC_URL + hubName)
                 .configureLogging(LogLevel.Information)
                 .build();
 

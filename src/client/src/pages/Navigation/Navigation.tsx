@@ -102,7 +102,7 @@ const Navigation = () => {
                             timer: 1500
                         });
 
-                        if(fileUpload.current)
+                        if (fileUpload.current)
                             fileUpload.current.value = '';
                     }
                 }).catch(err => {
@@ -114,8 +114,12 @@ const Navigation = () => {
             },
             allowOutsideClick: () => !Swal.isLoading()
         });
+    };
 
+    const toggleMobileNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
 
+        event.preventDefault();
+        setNavOpened(prev => !prev)
     };
 
     return (
@@ -127,23 +131,23 @@ const Navigation = () => {
                             <li key={link.href}><a onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a></li>
                         )}
 
-                        <div style={{ display: 'flex', marginLeft: 'auto' }}>
-                            {userData?.isAuthenticated ?
-                                <li>
-                                    <a onClick={uploadImage} href="#">Upload</a>
-                                </li>
-                                : null
-                            }
-                            {!userData?.isAuthenticated ?
-                                <li><a onClick={openLoginModal} href="#">Login</a></li>
-                                : <li><a onClick={logoutHandler} href="#">Logout</a></li>
-                            }
-                        </div>
+
+                        {userData?.isAuthenticated ?
+                            <li style={{ marginLeft: 'auto' }}>
+                                <a onClick={uploadImage} href="#">Upload</a>
+                            </li>
+                            : null
+                        }
+                        {!userData?.isAuthenticated ?
+                            <li><a onClick={openLoginModal} href="#">Login</a></li>
+                            : <li><a onClick={logoutHandler} href="#">Logout</a></li>
+                        }
+
 
                     </ul>
 
                     <div className={styles.mobileNav}>
-                        <a className={styles.navBtn} onClick={() => setNavOpened(prev => !prev)}>
+                        <a className={styles.navBtn} href="#" onClick={toggleMobileNavigation}>
                             <i className="fa fa-bars"></i>
                         </a>
                         {navOpened &&
@@ -151,6 +155,10 @@ const Navigation = () => {
                                 {navLinks.map(link =>
                                     <a key={link.href} onClick={(event) => navigate(event, link.href)} href={link.href}>{link.title}</a>
                                 )}
+                                {userData?.isAuthenticated ?
+                                    <a onClick={uploadImage} href="#">Upload</a>
+                                    : null
+                                }
                                 {!userData?.isAuthenticated ?
                                     <a onClick={openLoginModal} href="#">Login</a>
                                     : <a onClick={logoutHandler} href="#">Logout</a>

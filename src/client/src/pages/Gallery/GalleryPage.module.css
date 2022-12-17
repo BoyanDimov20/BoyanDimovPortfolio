@@ -45,6 +45,9 @@ img:hover + .description {
     display: flex;
 }
 
+.description:hover {
+    display: flex;
+}
 
 .description {
     display: none;

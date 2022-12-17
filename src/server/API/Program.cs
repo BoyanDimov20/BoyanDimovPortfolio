@@ -95,18 +95,34 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline. 
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 
 app.UseCors(DefaultCorsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+if(app.Environment.IsDevelopment())
+{
+    app.MapControllers();
+} 
+else
+{
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+
+        endpoints.MapFallbackToFile("/index.html");
+    });
+}
+
 app.MapHub<CommentHub>("/commentHub").RequireCors(builder =>
 {
     builder
-        .WithOrigins("http://localhost:3000")
+        .WithOrigins("http://localhost:3000", "http://localhost:5000", "https://localhost:5001")
         .AllowAnyHeader()
         .AllowCredentials()
         .WithMethods("GET", "POST");
 });
+
 app.Run();

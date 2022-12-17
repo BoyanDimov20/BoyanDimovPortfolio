@@ -83,7 +83,7 @@ const GalleryPage = () => {
             </div>
             {showDeleteIcon ?
                 <span onDrop={onDrop} onDragOver={dragOverHandler} style={{ position: 'fixed', bottom: '10px', color: 'red' }}>
-                    <i style={{ fontSize: 36 }} className="fa fa-trash" aria-hidden="true"></i>
+                    <i style={{ fontSize: 72 }} className="fa fa-trash" aria-hidden="true"></i>
                 </span>
                 : <></>}
         </section>

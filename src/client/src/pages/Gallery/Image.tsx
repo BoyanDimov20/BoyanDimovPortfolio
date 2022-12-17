@@ -95,7 +95,7 @@ const Image = ({ src, id, author, title, onDragStart, onDragEnd }: ImageProperti
     return (
         <>
             <div className={styles.img}>
-                <img draggable onDragEnd={onDragEnd} onDragStart={onDragStart} onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
+                <img draggable alt={title} onDragEnd={onDragEnd} onDragStart={onDragStart} onClick={() => setDialogOpened(true)} className={styles.img} src={src} />
                 <div className={styles.description}>
                     <div className={styles.title}>{title}</div>
                     <div>Author: {author}</div>
@@ -106,7 +106,7 @@ const Image = ({ src, id, author, title, onDragStart, onDragEnd }: ImageProperti
                 <Portal id="modal-root">
                     <div className={styles.modal}>
                         <span className={styles.close} onClick={() => setDialogOpened(false)}>&times;</span>
-                        <img className={styles.modalImg} src={src} />
+                        <img alt={title} className={styles.modalImg} src={src} />
                         <div className={styles.commentSection} style={{ overflowX: comments?.length >= 3 ? 'auto' : 'unset', minHeight: comments?.length >= 3 ? '50%' : 'unset' }}>
                             <h3 className={styles.commentHeading}>Остави коментар</h3>
                             {comments?.map((x) =>

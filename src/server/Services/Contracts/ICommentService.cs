@@ -8,5 +8,6 @@ namespace Services.Contracts
         Task<string> AddComment(string content, string imageId, string userId);
 
         Task DeleteComment(string commentId, string userId);
+        Task UpdateComment(string id, string commentValue);
     }
 }

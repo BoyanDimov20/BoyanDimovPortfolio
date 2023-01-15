@@ -133,13 +133,13 @@ const Navigation = () => {
 
 
                         {userData?.isAuthenticated ?
-                            <li style={{ marginLeft: 'auto' }}>
+                            <li className={styles.rightAligned}>
                                 <a onClick={uploadImage} href="#">Upload</a>
                             </li>
                             : null
                         }
                         {!userData?.isAuthenticated ?
-                            <li><a onClick={openLoginModal} href="#">Login</a></li>
+                            <li className={styles.rightAligned}><a onClick={openLoginModal} href="#">Login</a></li>
                             : <li><a onClick={logoutHandler} href="#">Logout</a></li>
                         }
 

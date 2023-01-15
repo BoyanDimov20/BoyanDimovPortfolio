@@ -19,6 +19,8 @@ namespace API.Controllers
             this.commentService = commentService;
             this.userManager = userManager;
         }
+        
+        [HttpGet]
         public async Task<IActionResult> Get(string imageId)
         {
             var userId = this.userManager.GetUserId(User);
@@ -55,6 +57,14 @@ namespace API.Controllers
         {
             var userId = this.userManager.GetUserId(User);
             await this.commentService.DeleteComment(id, userId);
+
+            return Ok();
+        }
+        
+        [HttpPut]
+        public async Task<IActionResult> Put(UpdateCommentModel model)
+        {
+            await this.commentService.UpdateComment(model.Id, model.CommentValue);
 
             return Ok();
         }

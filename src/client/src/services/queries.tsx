@@ -14,5 +14,11 @@ export const queryConfig = {
     getCurrentUser: {
         queryKey: 'me',
         url: '/auth/me'
+    },
+
+    editCommentById: {
+        url: () => `/api/comment`,
+        method: 'PUT',
+        invalidationQueryKey: 'comments'
     }
 }

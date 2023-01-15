@@ -110,7 +110,7 @@ const Image = ({ src, id, author, title, onDragStart, onDragEnd }: ImageProperti
                         <div className={styles.commentSection} style={{ overflowX: comments?.length >= 3 ? 'auto' : 'unset', minHeight: comments?.length >= 3 ? '50%' : 'unset' }}>
                             <h3 className={styles.commentHeading}>Остави коментар</h3>
                             {comments?.map((x) =>
-                                <Comment isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
+                                <Comment id={x.id} isEditable={x.isEditable} onDeleteComment={() => deleteComment(x.id)} key={x.id} author={x.name} comment={x.content} />
                             )}
                             <div className={styles.btnContainer}>
                                 <input ref={commentInputRef} onKeyDown={enterPressedHandler} className={styles.input} placeholder="Write your comment.." type="text" />

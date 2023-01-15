@@ -16,6 +16,10 @@
   width: 90%;
 }
 
+.desktopNav .rightAligned {
+  margin-left: auto;
+}
+
 .desktopNav li a {
   display: block;
   color: white;

@@ -56,4 +56,15 @@ public class CommentService : ICommentService
 
         await this.repository.DeleteById<Comment>(commentId);
     }
+
+    public async Task UpdateComment(string id, string commentValue)
+    {
+        var comment = await this.repository.GetById<Comment>(id).FirstOrDefaultAsync();
+        if (comment != null)
+        {
+            comment.Content = commentValue;
+            await this.repository.Update(comment);
+        }
+        
+    }
 }

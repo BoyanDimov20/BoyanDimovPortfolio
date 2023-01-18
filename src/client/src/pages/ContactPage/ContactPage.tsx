@@ -27,10 +27,10 @@ const ContactPage = () => {
         rows: 6
     });
 
-    
+
 
     const clearField = (stateFunction: Dispatch<SetStateAction<any>>) => {
-        stateFunction((prev : any) => {
+        stateFunction((prev: any) => {
             const copy = { ...prev };
             copy.value = '';
 
@@ -66,18 +66,45 @@ const ContactPage = () => {
         }
 
         if (emailState.value != '' && subjectState.value != '' && contentState.value != '') {
+            fetch('/api/contact', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: emailState.value,
+                    subject: subjectState.value,
+                    content: contentState.value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            }).then(x => {
+                if (x.ok) {
+                    clearField(setEmailState);
+                    clearField(setSubjectState);
+                    clearField(setContentState);
 
-            clearField(setEmailState);
-            clearField(setSubjectState);
-            clearField(setContentState);
-            
-            Swal.fire({
-                title: 'Good job!',
-                text: 'Your email was sent successfully.',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500
-            });
+                    Swal.fire({
+                        title: 'Good job!',
+                        text: 'Your email was sent successfully.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else if (x.status == 400) {
+                    
+                    x.text().then(text => {
+                        Swal.fire({
+                            title: 'Failed!',
+                            text: text,
+                            icon: 'error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    });
+
+                }
+            })
+
         }
     };
 

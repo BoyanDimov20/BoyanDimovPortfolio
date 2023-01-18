@@ -5,6 +5,8 @@ using Data.DbModels;
 using Data.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Services.Configs;
 using Services.Contracts;
 using Services.Implementation;
 
@@ -20,7 +22,7 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
 });
 
-var path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+var path = Environment.CurrentDirectory;
 var DbPath = Path.Join(path, "portfolio.db");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -60,6 +62,7 @@ builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var cloudinaryAccount = new Account("logopediawiki", "251392618569756", "jVlazU72hmYAAgZ2CRTmiQUQzB8");
 var cloudinary = new Cloudinary(cloudinaryAccount);
@@ -78,6 +81,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+var emailConfig = builder.Configuration
+        .GetSection("EmailSettings")
+        .Get<EmailConfiguration>();
+
+builder.Services.AddSingleton(emailConfig);
 
 
 

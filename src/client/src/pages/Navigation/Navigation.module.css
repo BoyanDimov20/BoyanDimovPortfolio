@@ -55,6 +55,7 @@
   position: fixed;
   display: none;
   width: 100%;
+  z-index: 1;
 }
 
 .mobileNav #myLinks {

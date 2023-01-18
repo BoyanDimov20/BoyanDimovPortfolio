@@ -41,7 +41,8 @@ namespace API.Controllers
                 using var stream = model.File.OpenReadStream();
                 var uploadParams = new ImageUploadParams()
                 {
-                    File = new FileDescription(model.File.Name, stream)
+                    File = new FileDescription(model.File.Name, stream),
+                    Format = "webp"
                 };
 
                 uploadResult = cloudinary.Upload(uploadParams);

@@ -6,10 +6,12 @@ const useHubConnection = (hubName: string, afterStartedConnection?: (connection:
 
     const [connection, setConnection] = useState<HubConnection>();
 
+    const url = process.env.NODE_ENV == 'production' ? process.env.PUBLIC_URL : 'https://localhost:7186/';
+
     useEffect(() => {
         try {
             const connectionBuilder = new HubConnectionBuilder()
-                .withUrl(process.env.PUBLIC_URL + hubName)
+                .withUrl(url + hubName)
                 .configureLogging(LogLevel.Information)
                 .build();
 

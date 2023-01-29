@@ -127,7 +127,7 @@ else
 app.MapHub<CommentHub>("/commentHub").RequireCors(builder =>
 {
     builder
-        .WithOrigins("http://localhost:3000", "http://localhost:5000", "https://localhost:5001")
+        .WithOrigins("http://localhost:3000", "http://localhost:5000", "https://localhost:5001", "https://localhost:7186/", "http://localhost:5152")
         .AllowAnyHeader()
         .AllowCredentials()
         .WithMethods("GET", "POST");

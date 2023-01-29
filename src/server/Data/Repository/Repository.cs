@@ -52,7 +52,7 @@ namespace Data.Repository
             this.dbContext.Remove(entity);
             await this.dbContext.SaveChangesAsync();
         }
-
+        
         public async Task Delete<T>(Expression<Func<T, bool>> predicate) where T : class, IEntity
         {
             var entities = this.dbContext.Set<T>().Where(predicate);
